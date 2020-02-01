@@ -25,17 +25,29 @@ interface ExperimentEngine (m : Type -> Type) where
     : (popSize : PopulationSize)
     -> (countdown : TerminationCountdown)
     -> ST m Var [add (Experiment popSize countdown)]
-  perform
+  step
     : (x : Var)
-    -> ST m () [x ::: Experiment popSize countdown :-> Experiment popSize (ActionsRemaining Z)]
+    -> ST m () [x ::: Experiment popSize (ActionsRemaining (S k))
+                  :-> Experiment popSize (ActionsRemaining k)]
   conclude
     : (x : Var)
     -> ST m MostSuccessfulIndividual [remove x (Experiment popSize (ActionsRemaining Z))]
 
+export
+perform
+  : ExperimentEngine m
+  => (x : Var)
+  -> ST m () [x ::: Experiment {m} popSize (ActionsRemaining countdown)
+                :-> Experiment {m} popSize (ActionsRemaining Z)]
+perform x {countdown = Z} = pure ()
+perform x {countdown = S k} = do
+  step x
+  perform x
+
 ExperimentEngine m where
   Experiment popSize countdown = State (Population popSize)
   prepare popSize countdown = new $ Population.generate popSize
-  perform x = pure ()
+  step = ?step
   conclude x = do
     pop <- read x
     delete x

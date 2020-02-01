@@ -10,7 +10,7 @@ solve
   => PopulationSize
   -> TerminationCountdown
   -> ST m MostSuccessfulIndividual []
-solve popSize countdown = do
+solve popSize countdown@(ActionsRemaining k) = do
   experiment <- prepare popSize countdown
   perform experiment
   conclude experiment
