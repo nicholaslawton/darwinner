@@ -4,17 +4,18 @@ import Data.Vect
 
 import Individual
 
-export
+public export
 PopulationSize : Type
+PopulationSize = Nat
 
 export
-numberOfIndividuals : PopulationSize -> Nat
+Population : PopulationSize -> Performance -> Type
 
 export
-Population : PopulationSize -> Type
+individuals : Population (S popSize) wins -> Vect (S popSize) Individual
 
 export
-individuals : Population popSize -> Vect (numberOfIndividuals popSize) Individual
+generate : (popSize : PopulationSize) -> popSize = S k -> Population (S k) Z
 
 export
-generate : (popSize : PopulationSize) -> Population popSize
+recordWin : Elem winner (individuals pop) -> (pop : Population (S popSize) wins) -> Population (S popSize) (S wins)
