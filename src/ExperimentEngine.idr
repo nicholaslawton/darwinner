@@ -53,7 +53,13 @@ ExperimentEngine m where
 
   prepare popSize popSizeNotZero countdown = new $ Population.generate popSize popSizeNotZero
 
-  step = ?s
+  step x = (do
+    pop <- read x
+    let (_ ** winner) = takeFirst (individuals pop)
+    write x $ recordWin winner pop)
+      where
+        takeFirst : (xs : Vect (S k) elem) -> (first : elem ** Elem first xs)
+        takeFirst (first :: rest) = (first ** Here)
 
   conclude x = do
     pop <- read x
