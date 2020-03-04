@@ -26,12 +26,12 @@ interface ExperimentEngine (m : Type -> Type) where
     : (popSize : PopulationSize)
     -> popSize = S k
     -> (countdown : TerminationCountdown)
-    -> ST m Var [add (Experiment (S k) Z countdown)]
+    -> ST m Var [add (Experiment (S k) (Wins Z) countdown)]
 
   step
     : (x : Var)
-    -> ST m () [x ::: Experiment (S popSize) perf (ActionsRemaining (S k))
-                  :-> Experiment (S popSize) (S perf) (ActionsRemaining k)]
+    -> ST m () [x ::: Experiment (S popSize) (Wins wins) (ActionsRemaining (S k))
+                  :-> Experiment (S popSize) (Wins (S wins)) (ActionsRemaining k)]
 
   conclude
     : (x : Var)
@@ -41,8 +41,8 @@ export
 perform
   : ExperimentEngine m
   => (x : Var)
-  -> ST m () [x ::: Experiment {m} (S popSize) perf (ActionsRemaining countdown)
-                :-> Experiment {m} (S popSize) (countdown + perf) (ActionsRemaining Z)]
+  -> ST m () [x ::: Experiment {m} (S popSize) (Wins perf) (ActionsRemaining countdown)
+                :-> Experiment {m} (S popSize) (Wins (countdown + perf)) (ActionsRemaining Z)]
 perform x {countdown = Z} = pure ()
 perform x {countdown = S k} {perf} = do
   step x

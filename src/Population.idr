@@ -15,7 +15,10 @@ export
 individuals : Population (S popSize) wins -> Vect (S popSize) Individual
 
 export
-generate : (popSize : PopulationSize) -> popSize = S k -> Population (S k) Z
+generate : (popSize : PopulationSize) -> popSize = S k -> Population (S k) (Wins Z)
 
 export
-recordWin : Elem winner (individuals pop) -> (pop : Population (S popSize) wins) -> Population (S popSize) (S wins)
+recordWin
+  : Elem winner (individuals pop)
+  -> (pop : Population (S popSize) (Wins wins))
+  -> Population (S popSize) (Wins (S wins))
